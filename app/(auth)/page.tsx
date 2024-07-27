@@ -40,20 +40,20 @@ export default function Login() {
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setLoading(true)
-      // const response = await fetch("/api/auth/[...nextauth]", {
-      //     method: "POST",
-      //     headers: {
-      //         "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify(values),
-      // });
+      const response = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values),
+      });
   
-      // if (!response.ok) {
-      //     const errorData = await response.json();
-      //     throw new Error(errorData.error);
-      // }
+      if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error);
+      }
       console.log("Login values:", values);
-      router.push("/");
+      router.push("/dashboard");
     } catch (error: any) {
         toast.error(error.message || "An error occurred while logging in");
         console.error("Login error:", error);
