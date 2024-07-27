@@ -6,6 +6,7 @@ export interface UserDocument extends Document {
   email: string;
   tel: number;
   isAdmin: boolean;
+  compagnies: mongoose.Schema.Types.ObjectId[];
   timestamps: Date;
 }
 
@@ -25,6 +26,9 @@ const UserSchema = new Schema<UserDocument>({
   isAdmin: { 
     type: Boolean,
     default: false },
+  compagnies: [{ 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Compagnie' }],
   timestamps: { 
     type: Date, 
     default: Date.now },
