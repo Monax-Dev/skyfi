@@ -1,5 +1,6 @@
+"use client"
 import CardCompagnyLink from '@/components/us/cardCompagnyLink'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
     Card,
     CardContent,
@@ -11,31 +12,31 @@ import {
 import Link from 'next/link'
 import { HousePlus } from 'lucide-react'
 
-const data = [
-    {
-        name: 'Skypiea Records',
-        email: 'skypiearecords@skypieaent.sn',
-        tel: '33 000 00 00',
-        address: 'Ouest Foire, Dakar',
-        chiffreAffaires: 1000000000000000
-    },
-    {
-        name: 'Skypiea Visuels',
-        email: 'skypieavisuels@skypieaent.sn',
-        tel: '33 000 00 00',
-        address: 'Ouest Foire, Dakar',
-        chiffreAffaires: 1000000000000000
-    },
-    {
-        name: 'Skypiea Shop',
-        email: 'skypieashop@skypieaent.sn',
-        tel: '33 000 00 00',
-        address: 'Ouest Foire, Dakar',
-        chiffreAffaires: 1000000000000000
-    }
-]
+export default function Racine() {
+    const [compagnies, setCompagnies] = useState([]);
+    
+    
+  useEffect(() => {
+    const fetchCompagnies = async () => {
+      try {
+        const response = await fetch('/api/compagnies');
+        let data = await response.json();
 
-export default function page() {
+        if (response.ok) {
+          setCompagnies(data.compagnies);
+        } else {
+        
+        }
+      } catch (error) {
+       
+      }
+    };
+
+    fetchCompagnies();
+  }, [])
+
+  
+
   return (
     <div className='h-screen w-full overflow-hidden flex flex-col px-8 py-12 space-y-12'>
        <div>
@@ -43,8 +44,8 @@ export default function page() {
        </div>
         <div className='container mx-auto w-full flex items-start gap-4 flex-wrap justify-center lg:justify-normal'>
            {
-                data.map((compagny, index) => (
-                    <CardCompagnyLink key={index} compagny={compagny}/>
+                compagnies.length > 0 && compagnies.map((compagny, index) => (
+                        <CardCompagnyLink key={index} compagny={compagny}/>
                 ))
            }
             <Link href={`/racine/addCompagny`}>

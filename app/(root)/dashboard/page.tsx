@@ -4,7 +4,7 @@ import React from 'react'
 
 export default function Dashboard() {
   return (
-    <DashboardLayout>
+    <>
       /Dasboard
       <Link href="/" className="underline">
               Sign up
@@ -12,6 +12,6 @@ export default function Dashboard() {
             <Link href="/racine" className="underline">
              racp
             </Link>
-    </DashboardLayout>
+    </>
   )
 }
