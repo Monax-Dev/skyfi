@@ -1,3 +1,4 @@
+"use"
 import Link from "next/link"
 import {
 Home,
@@ -21,9 +22,9 @@ export default function DashboardLayout({
     children
 }: DashboardLayoutProps) {
 return (
-    <div className="flex min-h-screen w-full flex-col bg-muted/40">
-        <TooltipProvider>
+    <div className="flex min-h-screen w-full flex-col bg-muted/40 fixed">
     <aside className="fixed inset-y-0 left-0 z-10  w-14 flex-col border-r bg-background flex">
+        <TooltipProvider>
         <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
         <Link
             href="#"
@@ -71,10 +72,10 @@ return (
             <TooltipContent side="right">Settings</TooltipContent>
         </Tooltip>
         </nav>
-    </aside>
         </TooltipProvider>
-    <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
-        <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
+    </aside>
+    <div className=" flex flex-col sm:gap-4 sm:py-4  w-screen">
+        <main className="flex flex-col flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 ">
         {children}
         </main>
     </div>

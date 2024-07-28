@@ -1,5 +1,15 @@
 import CardCompagnyLink from '@/components/us/cardCompagnyLink'
 import React from 'react'
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+  } from "@/components/ui/card"
+import Link from 'next/link'
+import { HousePlus } from 'lucide-react'
 
 const data = [
     {
@@ -37,6 +47,13 @@ export default function page() {
                     <CardCompagnyLink key={index} compagny={compagny}/>
                 ))
            }
+            <Link href={`/racine/addCompagny`}>
+                <Card className=' shadow-xl max-w-xs w-72 h-60 hover:bg-slate-950 hover:text-slate-50 cursor-pointer'>
+                    <CardTitle className=' flex flex-col items-center justify-center h-full'> 
+                        <HousePlus className=' size-16'/>
+                    </CardTitle>
+                </Card>
+            </Link>
         </div>
     </div>
   )

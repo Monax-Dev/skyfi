@@ -1,72 +1,67 @@
-import Image from "next/image"
-import Link from "next/link"
+"use client"
 import {
-  File,
-  Home,
-  LineChart,
   ListFilter,
-  MoreHorizontal,
-  Package,
-  Package2,
-  PanelLeft,
   PlusCircle,
   Search,
-  Settings,
-  ShoppingCart,
-  Users2,
 } from "lucide-react"
 
-import { Badge } from "@/components/ui/badge"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+    CardTitle,
+  } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import {
   Tabs,
-  TabsContent,
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
+import { useEffect, useState } from "react"
+import { usePathname } from "next/navigation"
 
-export function NavBar() {
+export default function NavBar() {
+    const pathname = usePathname(); 
+    const [title, setTitle] = useState("");
+    const [subTitle, setSubTitle] = useState("");
+
+    useEffect(() => {
+        if (pathname.includes("facture")) {
+            setTitle( "Gestion des Factures");
+            setSubTitle("Facture");
+          } else if (pathname.includes("/")) {
+            setTitle( "Accueil");
+          } else if (pathname.includes("revenue")) {
+            setTitle( "Gestion des Revenues");
+          }
+    }, [pathname]);
   return (
-    <div className="flex min-h-screen w-full flex-col bg-muted/40">
-      <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
-        <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
-          <Tabs defaultValue="all">
-            <div className="flex items-center">
+    <div className="flex w-full flex-col bg-muted/40">
+      <div className="flex flex-col sm:gap-4 sm:py-4">
+        <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+          <div className=" hidden md:flex">
+          <CardTitle>{title}</CardTitle>
+            
+          </div>
+          <div className="relative ml-auto flex-1 md:grow-0">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search..."
+              className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
+            />
+          </div>
+        </header>
+      </div>
+      <Tabs className="w-full grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8" defaultValue="all">
+      <div className="flex items-center">
               <TabsList>
                 <TabsTrigger value="all">All</TabsTrigger>
                 <TabsTrigger value="active">Active</TabsTrigger>
@@ -75,13 +70,14 @@ export function NavBar() {
                   Archived
                 </TabsTrigger>
               </TabsList>
+        
               <div className="ml-auto flex items-center gap-2">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="sm" className="h-8 gap-1">
                       <ListFilter className="h-3.5 w-3.5" />
                       <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                        Filter
+                        Filtre
                       </span>
                     </Button>
                   </DropdownMenuTrigger>
@@ -97,23 +93,15 @@ export function NavBar() {
                     </DropdownMenuCheckboxItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-                <Button size="sm" variant="outline" className="h-8 gap-1">
-                  <File className="h-3.5 w-3.5" />
-                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Export
-                  </span>
-                </Button>
                 <Button size="sm" className="h-8 gap-1">
                   <PlusCircle className="h-3.5 w-3.5" />
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Add Product
+                    Ajouter {subTitle}
                   </span>
                 </Button>
               </div>
             </div>
-          </Tabs>
-        </main>
-      </div>
+            </Tabs>
     </div>
   )
 }
