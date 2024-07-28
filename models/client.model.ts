@@ -5,7 +5,6 @@ interface Client extends Document {
   email: string;
   tel: string;
   address: string;
-  timestamps: Date;
 }
 
 const ClientSchema = new Schema<Client>({
@@ -13,7 +12,6 @@ const ClientSchema = new Schema<Client>({
   email: { type: String, required: true },
   tel: { type: String, required: true },
   address: { type: String, required: true },
-  timestamps: { type: Date, default: Date.now },
 });
 
 const ClientModel = model<Client>('Client', ClientSchema);

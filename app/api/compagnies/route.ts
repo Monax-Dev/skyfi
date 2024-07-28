@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
             tel,
             address,
             chiffreAffaires,
+            createdBy: userId
         });
 
         const savedCompagnie = await newCompagnie.save();
@@ -48,6 +49,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
+
 
 // Fonction GET pour récupérer toutes les compagnies
 export async function GET(request: NextRequest) {

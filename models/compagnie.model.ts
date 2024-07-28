@@ -6,26 +6,35 @@ export interface CompagnieDocument extends Document {
   tel: string;
   address: string;
   chiffreAffaires: number;
+  factures: mongoose.Types.ObjectId[];
   createdBy: mongoose.Types.ObjectId;
   timestamps: Date;
 }
 
 const CompagnieSchema = new Schema<CompagnieDocument>({
-  name: { type: String,
+  name: { 
+    type: String,
     required: true },
-  email: { type: String,
+  email: { 
+    type: String,
     required: true },
-  tel: { type: String,
+  tel: { 
+    type: String,
     required: true },
-  address: { type: String,
+  address: { 
+    type: String,
     required: true },
   chiffreAffaires: { 
     type: Number,
-    required: false,
-    default:0
-   },
-  createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  timestamps: { type: Date,
+    required: false, default: 0 },
+  factures: [{ 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Facture', required: false }],
+  createdBy: { 
+    type: Schema.Types.ObjectId, 
+    ref: 'User', required: true },
+  timestamps: { 
+    type: Date, 
     default: Date.now },
 });
 

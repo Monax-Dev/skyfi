@@ -1,20 +1,58 @@
-import { Schema, model, Document } from 'mongoose';
+import mongoose, { Document, Model, Schema } from "mongoose";
 
-interface Facture extends Document {
-  items: string[];
+// Définir l'interface pour les sous-documents Item
+interface Item extends Document {
+  name: string;
+  quantity: number;
+  prixUnitaire: number;
+  timestamps: Date;
+}
+
+// Créer le schéma pour les sous-documents Item
+const ItemSchema = new Schema<Item>({
+  name: { 
+    type: String,
+    required: true 
+  },
+  quantity: { 
+    type: Number,
+    required: true 
+  },
+  prixUnitaire: { 
+    type: Number,
+    required: true 
+  },
+  timestamps: { 
+    type: Date,
+    default: Date.now 
+  },
+});
+
+// Définir l'interface pour le document Facture
+export interface FactureDocument extends Document {
+  items: Item[];
   totalAPayer: number;
   timestamps: Date;
   isPaid: boolean;
 }
 
-const FactureSchema = new Schema<Facture>({
-  items: [{ type: Schema.Types.ObjectId, ref: 'Item' }],
-  totalAPayer: { type: Number, required: true },
-  timestamps: { type: Date, default: Date.now },
-  isPaid: { type: Boolean, default: false },
+// Créer le schéma pour Facture avec les sous-documents Item
+const FactureSchema = new Schema<FactureDocument>({
+  items: [ItemSchema],
+  totalAPayer: { 
+    type: Number,
+    required: true 
+  },
+  timestamps: { 
+    type: Date,
+    default: Date.now 
+  },
+  isPaid: { 
+    type: Boolean,
+    default: false 
+  },
 });
 
-const FactureModel = model<Facture>('Facture', FactureSchema);
+const Facture: Model<FactureDocument> = mongoose.models.Facture || mongoose.model<FactureDocument>("Facture", FactureSchema);
 
-export default FactureModel;
-export type { Facture };
+export default Facture;
