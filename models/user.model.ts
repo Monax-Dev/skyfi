@@ -28,7 +28,8 @@ const UserSchema = new Schema<UserDocument>({
     default: false },
   compagnies: [{ 
     type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Compagnie' }],
+    ref: 'Compagnie',
+    required: true }],
   timestamps: { 
     type: Date, 
     default: Date.now },

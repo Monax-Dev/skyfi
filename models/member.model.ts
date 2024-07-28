@@ -2,18 +2,26 @@ import mongoose, { Document, Model, Schema } from "mongoose";
 
 export interface MemberDocument extends Document {
     user: mongoose.Schema.Types.ObjectId;
-    company: mongoose.Schema.Types.ObjectId;
+    companie: mongoose.Schema.Types.ObjectId;
     role: string;
     timestamps: Date;
 }
 
 const MemberSchema = new Schema<MemberDocument>({
-    user: { type: mongoose.Schema.Types.ObjectId,
-         ref: 'User', required: true },
-    company: { type: mongoose.Schema.Types.ObjectId,
-         ref: 'Compagnie', required: true },
-    role: { type: String, required: true },
-    timestamps: { type: Date, default: Date.now },
+    user: { 
+        type: mongoose.Schema.Types.ObjectId,
+         ref: 'User', 
+         required: true },
+    companie: { 
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Compagnie',
+         required: true },
+    role: { 
+        type: String,
+        required: true },
+    timestamps: { 
+        type: Date,
+        default: Date.now },
 })
 
 const Member: Model<MemberDocument> = mongoose.models.User || mongoose.model<MemberDocument>("Member", MemberSchema);

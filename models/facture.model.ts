@@ -30,18 +30,29 @@ const ItemSchema = new Schema<Item>({
 
 // Définir l'interface pour le document Facture
 export interface FactureDocument extends Document {
+  name: string;
   items: Item[];
   totalAPayer: number;
+  client: mongoose.Schema.Types.ObjectId;
   timestamps: Date;
   isPaid: boolean;
 }
 
 // Créer le schéma pour Facture avec les sous-documents Item
 const FactureSchema = new Schema<FactureDocument>({
+  name: {
+    type: String,
+    required: true 
+  },
   items: [ItemSchema],
   totalAPayer: { 
     type: Number,
     required: true 
+  },
+  client: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Client',
+    required: true
   },
   timestamps: { 
     type: Date,
