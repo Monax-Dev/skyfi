@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 
 const formSchema = z
@@ -52,8 +53,7 @@ export default function Login() {
           const errorData = await response.json();
           throw new Error(errorData.error);
       }
-      console.log("Login values:", values);
-      router.push("/dashboard");
+      router.push("/racine");
     } catch (error: any) {
         toast.error(error.message || "An error occurred while logging in");
         console.error("Login error:", error);
@@ -118,12 +118,12 @@ export default function Login() {
         </form>
       </Form>
           </div>
-          {/* <div className="mt-4 text-center text-sm">
+          <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{" "}
-            <Link href="#" className="underline">
+            <Link href="/dashboard" className="underline">
               Sign up
             </Link>
-          </div> */}
+          </div>
         </div>
       </div>
       <div className="hidden bg-muted lg:block relative">
