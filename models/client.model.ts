@@ -1,20 +1,27 @@
-import { Schema, model, Document } from 'mongoose';
+import mongoose, { Document, Model, Schema } from "mongoose";
 
-interface Client extends Document {
+export interface ClientDocument extends Document {
   name: string;
   email: string;
   tel: string;
   address: string;
 }
 
-const ClientSchema = new Schema<Client>({
-  name: { type: String, required: true },
-  email: { type: String, required: true },
-  tel: { type: String, required: true },
-  address: { type: String, required: true },
+const ClientSchema = new Schema<ClientDocument>({
+  name: { 
+    type: String, 
+    required: true },
+  email: { 
+    type: String, 
+    required: true },
+  tel: { 
+    type: String, 
+    required: true },
+  address: { 
+    type: String, 
+    required: true },
 });
 
-const ClientModel = model<Client>('Client', ClientSchema);
+const Client: Model<ClientDocument> = mongoose.models.Client || mongoose.model<ClientDocument>("Client", ClientSchema);
 
-export default ClientModel;
-export type { Client };
+export default Client;
