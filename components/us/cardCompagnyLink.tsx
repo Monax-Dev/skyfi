@@ -8,11 +8,16 @@ import {
     CardTitle,
   } from "@/components/ui/card"
 import { Mail, MapPin, Phone } from 'lucide-react'
-import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+
 export default function CardCompagnyLink({compagny} : {compagny: any}) {
+    const router = useRouter();
+    const handleSelectCompagnie = (compagnyId : any) => {
+        localStorage.setItem('selectedCompagnieId', compagnyId);
+        router.push('/dashboard');
+      }
   return (
-   <Link href={`/dashboard`}>
-     <Card className=' shadow-xl max-w-xs w-72 hover:bg-slate-950 hover:text-slate-50 cursor-pointer'>
+    <Card onClick={() => handleSelectCompagnie(compagny._id)} className=' shadow-xl max-w-xs w-72 hover:bg-slate-950 hover:text-slate-50 cursor-pointer'>
     <CardHeader>
         <CardTitle>{compagny.name}</CardTitle>
     </CardHeader>
@@ -42,6 +47,5 @@ export default function CardCompagnyLink({compagny} : {compagny: any}) {
         XOF {compagny.chiffreAffaires}
     </CardFooter>
 </Card>
-    </Link>
   )
 }

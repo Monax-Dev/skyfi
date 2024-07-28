@@ -1,10 +1,6 @@
 "use client"
 import { useRouter } from "next/navigation"
-import React, {useState} from "react"
-import {
-  CardDescription,
-  CardTitle,
-} from "@/components/ui/card"
+import React, {useEffect, useState} from "react"
 import { toast } from "react-hot-toast";
 import { Loader2 } from "lucide-react"
 import * as z from "zod";
@@ -21,28 +17,54 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+  
+import {
+    CardTitle,
+    CardDescription
+} from "@/components/ui/card"
 
 const formSchema = z
-  .object({
-    name: z.string(),
-    email: z.string().email(),
-    tel: z.string(),
-    address: z.string(),
-  });
+    .object({
+        name: z.string(),
+        email: z.string().email(),
+        tel: z.string(),
+        address: z.string(),
+});
 
-export default function AddCompagny() {
+export default function Compagnie() {
     const router = useRouter();
+    const [idCompagnie, setIdCompagnie] = useState(localStorage.getItem("selectedCompagnieId") || "");
+    const [compagnie, setCompagnie] = useState({
+        name: "",
+        email: "",
+        tel: "",
+        address: "",
+    });
+
+    useEffect(() => {
+        setIdCompagnie(localStorage.getItem("selectedCompagnieId") || "");
+        if (idCompagnie) {
+            fetch(`/api/compagnies/${idCompagnie}`)
+                .then((res) => res.json())
+                .then((data) => {
+                    setCompagnie(data.compagnie);
+                });
+        }
+    }, [idCompagnie, setCompagnie, setIdCompagnie]);
+    
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            name:"",
-            email:"",
-            tel:"",
-            address:"",
+            name: compagnie.name ,
+            email: compagnie.email ,
+            tel: compagnie.tel ,
+            address: compagnie.address ,
         },
     });
 
     const [loading, setLoading] = useState(false); 
+
     const handleSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
           setLoading(true)
@@ -66,33 +88,40 @@ export default function AddCompagny() {
           setLoading(false)
       }
       };
-  return (
-    <div className=" h-screen w-full overflow-hidden flex items-center justify-center">
 
+  return (
+    <div className="w-full flex flex-col flex-1 items-start gap-4 p-4 sm:px-6 sm:py-8 md:gap-8">
+          <div className=" hidden md:flex">
+          <CardTitle>{ compagnie.name || "Ma compagnie" }</CardTitle>
+            
+          </div>
        <Form {...form}>
         <form 
           onSubmit={form.handleSubmit(handleSubmit)}
-          className="max-w-md w-full flex flex-col gap-4 border px-4 py-12 rounded-xl border-slate-950 shadow-lg"
+          className=" w-full flex flex-col gap-4 border px-4 py-12 rounded-xl border-slate-950 shadow-lg"
         >
-       <CardTitle className="text-xl">Ajouter une compagnie</CardTitle>
+       <CardTitle className="text-xl">Modifier la compagnie</CardTitle>
         <CardDescription>
-         Entrer les informations de la compagnie
+         Entrer les nouvelles informations de la compagnie
         </CardDescription>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
             <FormField
                 control={form.control}
                 name="name"
                 render={({ field }) => {
                 return (
                     <FormItem>
-                    <FormLabel>Nom de la Compagnie</FormLabel>
-                    <FormControl>
-                        <Input
-                        placeholder="Compagnie"
-                        type="text"
-                        {...field}
-                        />
-                    </FormControl>
-                    <FormMessage />
+                        <FormLabel>Nom de la Compagnie</FormLabel>
+                        <FormControl>
+                            <Input
+                                placeholder="Compagnie"
+                                type="text"
+                                {...field}
+                                value={compagnie.name}
+                                onChangeCapture={(e) => setCompagnie({...compagnie, name: e.target.value})}
+                            />
+                        </FormControl>
+                        <FormMessage />
                     </FormItem>
                 );
                 }}
@@ -109,6 +138,8 @@ export default function AddCompagny() {
                       placeholder="330000000"
                       type="tel"
                       {...field}
+                      value={compagnie.tel}
+                      onChangeCapture={(e) => setCompagnie({...compagnie, tel: e.target.value})}
                     />
                   </FormControl>
                   <FormMessage />
@@ -128,6 +159,8 @@ export default function AddCompagny() {
                         placeholder="Email"
                         type="email"
                         {...field}
+                        value={compagnie.email}
+                        onChangeCapture={(e) => setCompagnie({...compagnie, email: e.target.value})}
                         />
                     </FormControl>
                     <FormMessage />
@@ -147,6 +180,8 @@ export default function AddCompagny() {
                       placeholder="Ouest Foire, Dakar, Sénégal"
                       type="text"
                       {...field}
+                    value={compagnie.address}
+                    onChangeCapture={(e) => setCompagnie({...compagnie, address: e.target.value})}
                     />
                   </FormControl>
                   <FormMessage />
@@ -154,15 +189,14 @@ export default function AddCompagny() {
               );
             }}
           />
-          <Button type="submit" className="w-full">
+            </div>
+          <Button type="submit" className="max-w-xs w-full mt-4">
             
           {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Valider"}
           </Button>
-          <Link href={"/racine"}>
-          Racine
-          </Link>
         </form>
       </Form>
+      
     </div>
   )
 }

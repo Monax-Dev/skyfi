@@ -4,7 +4,8 @@ import {
 Home,
 Settings,
 CircleDollarSign,
-File
+File,
+Building2
 } from "lucide-react"
 import {
 Tooltip,
@@ -22,8 +23,8 @@ export default function DashboardLayout({
     children
 }: DashboardLayoutProps) {
 return (
-    <div className="flex min-h-screen w-full flex-col bg-muted/40 fixed">
-    <aside className="fixed inset-y-0 left-0 z-10  w-14 flex-col border-r bg-background flex">
+    <div className="flex min-h-screen w-full bg-muted/40 fixed">
+    <aside className=" w-14 flex-col border-r bg-background flex">
         <TooltipProvider>
         <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
         <Link
@@ -55,7 +56,19 @@ return (
                 <span className="sr-only">Factures</span>
             </Link>
             </TooltipTrigger>
-            <TooltipContent side="right">Files</TooltipContent>
+            <TooltipContent side="right">Factures</TooltipContent>
+        </Tooltip>
+        <Tooltip>
+            <TooltipTrigger asChild>
+            <Link
+                href="/dashboard/compagnie"
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+            >
+                <Building2 className="h-5 w-5" />
+                <span className="sr-only">Compagnie</span>
+            </Link>
+            </TooltipTrigger>
+            <TooltipContent side="right">Compagnie</TooltipContent>
         </Tooltip>
         </nav>
         <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
