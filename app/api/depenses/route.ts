@@ -50,15 +50,13 @@ export async function POST(request: NextRequest) {
 }
 
 // Fonction pour gérer les requêtes GET
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
     try {
         // Connexion à la base de données
         await connectToDB();
 
         // Extraction des paramètres de recherche de l'URL
-        const { searchParams } = new URL(request.url);
-        const companyId = searchParams.get('companyId');
-
+        const companyId = params;
         // Vérification si l'ID de la compagnie est fourni
         if (!companyId) {
             // Retourner une réponse d'erreur si l'ID de la compagnie est manquant
