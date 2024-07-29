@@ -5,7 +5,7 @@ export interface CompagnieDocument extends Document {
   email: string;
   tel: string;
   address: string;
-  chiffreAffaires: number;
+  Revenus: number;
   factures: mongoose.Types.ObjectId[];
   depenses: mongoose.Types.ObjectId[];
   createdBy: mongoose.Types.ObjectId;
@@ -25,7 +25,7 @@ const CompagnieSchema = new Schema<CompagnieDocument>({
   address: { 
     type: String,
     required: true },
-  chiffreAffaires: { 
+    Revenus: { 
     type: Number,
     required: false, default: 0 },
   factures: [{ 

@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
 }
 
 // Fonction GET pour récupérer les factures d'une compagnie spécifique
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
     try {
         // Connecter à la base de données
         await connectToDB();
@@ -75,8 +75,7 @@ export async function GET(request: NextRequest) {
         const userId = tokenData.userId;
 
         // Récupérer l'ID de la compagnie à partir des paramètres de la requête
-        const { searchParams } = new URL(request.url);
-        const compagnieId = searchParams.get('compagnieId');
+        const compagnieId = params;
 
         if (!compagnieId) {
             return NextResponse.json({ success: false, message: 'ID de la compagnie requis' }, { status: 400 });
