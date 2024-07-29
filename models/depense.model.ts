@@ -2,9 +2,10 @@ import mongoose, { Document, Model, Schema } from "mongoose";
 
 export interface DepenseDocument extends Document {
   name: string;
-  totalAPayer: number;
+  montant: number;
+  compagnie: mongoose.Schema.Types.ObjectId;
+  createdBy: mongoose.Schema.Types.ObjectId;
   timestamps: Date;
-  isPaid: boolean;
 }
 
 const DepenseSchema = new Schema<DepenseDocument>({
@@ -12,15 +13,22 @@ const DepenseSchema = new Schema<DepenseDocument>({
   type: String,
   required: true,
   },
-  totalAPayer: { 
+  montant: { 
     type: Number,
     required: true },
+  compagnie:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Compagnie', 
+    required: true
+  },
+  createdBy:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', 
+    required: true
+  },
   timestamps: { 
     type: Date,
     default: Date.now },
-  isPaid: { 
-    type: Boolean,
-     default: false },
 });
 
 const Depense: Model<DepenseDocument> = mongoose.models.Depense || mongoose.model<DepenseDocument>("Depense", DepenseSchema);

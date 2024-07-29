@@ -7,6 +7,7 @@ export interface CompagnieDocument extends Document {
   address: string;
   chiffreAffaires: number;
   factures: mongoose.Types.ObjectId[];
+  depenses: mongoose.Types.ObjectId[];
   createdBy: mongoose.Types.ObjectId;
   timestamps: Date;
 }
@@ -30,6 +31,9 @@ const CompagnieSchema = new Schema<CompagnieDocument>({
   factures: [{ 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Facture', required: false }],
+  depenses: [{ 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'Depense', required: false }],
   createdBy: { 
     type: Schema.Types.ObjectId, 
     ref: 'User', required: true },
