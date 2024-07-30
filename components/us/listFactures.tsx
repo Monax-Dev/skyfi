@@ -1,6 +1,5 @@
-import React from 'react'
-
-
+"use client";
+import React, { use, useEffect, useState } from 'react'
 import {
     Card,
     CardContent,
@@ -21,8 +20,26 @@ import {
   TabsContent,
 } from "@/components/ui/tabs"
 import FactureRow from './factureRow'
+import { set } from 'mongoose';
+
 
 export default function ListFactures() {
+  
+  const [factures, setFactures] = useState([]);
+  const [compagnieId, setCompagnieId] = useState(localStorage.getItem('selectedCompagnieId') || '');
+  
+
+  useEffect(() => {
+    const fetchFactures = async () => {
+      const res = await fetch(`/api/factures?compagnieId=${compagnieId}`);
+      const newFactures = await res.json();
+      setFactures(newFactures.data);
+    }
+    setCompagnieId(localStorage.getItem('selectedCompagnieId') || '');
+    fetchFactures();
+    console.log(factures);
+  }, [factures, compagnieId]);
+  
   return (
     <div className="w-full grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
           <Tabs defaultValue="all">
