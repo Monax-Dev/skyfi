@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/tabs"
 import { useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
+import Link from "next/link"
 
 export default function NavBar() {
     const pathname = usePathname(); 
@@ -95,9 +96,11 @@ export default function NavBar() {
                 </DropdownMenu>
                 <Button size="sm" className="h-8 gap-1">
                   <PlusCircle className="h-3.5 w-3.5" />
-                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Ajouter {subTitle}
-                  </span>
+                    <Link href={pathname + "/create"}>
+                      <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                      Ajouter {subTitle}
+                    </span>
+                  </Link>
                 </Button>
               </div>
             </div>

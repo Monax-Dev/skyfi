@@ -19,68 +19,66 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 import { CardTitle, CardDescription } from "@/components/ui/card";
+import { set } from "mongoose";
 
 const formSchema = z.object({
-  name: z.string({
-    message: "Le nom de la compagnie est requis",
-    invalid_type_error: "Le nom de la compagnie est invalide",
-  }),
-  email: z
-    .string()
-    .email({ message: "L'email de la compagnie est invalide" }),
-  tel: z.string({
-    message: "Le numéro de téléphone de la compagnie est requis",
-    invalid_type_error: "Le numéro de téléphone de la compagnie est invalide",
-  }),
-  address: z.string({
-    message: "L'adresse de la compagnie est requise",
-    invalid_type_error: "L'adresse de la compagnie est invalide",
-  }),
+    username: z.string({
+        message: "Votre Nom complet est requis",
+        invalid_type_error: "Votre Nom complet est invalide",
+    }),
+    email: z
+        .string()
+        .email({ message: "Votre email de la compagnie est invalide" }),
+    tel: z.string({
+        message: "Votre numéro de téléphone de la compagnie est requis",
+        invalid_type_error: "Votre numéro de téléphone de la compagnie est invalide",
+    }),
+    // password: z.string({
+    //     message: "Votre mot de passse est requise",
+    //     invalid_type_error: "Votre mot de passse est invalide",
+    // }).min(6, "Votre mot de passse doit contenir au moins 6 caractères"),
 });
 
-export default function Compagnie() {
+export default function Profil() {
   const router = useRouter();
-  const [idCompagnie, setIdCompagnie] = useState(localStorage.getItem("selectedCompagnieId") || "");
-  const [title, setTitle] = useState("Ma compagnie");
-  const [compagnie, setCompagnie] = useState({
-    name: "",
+  const [title, setTitle] = useState("");
+  const [isModified, setIsModified] = useState(false);
+  const [idUser, setIdUser] = useState("");
+  const [user, setUser] = useState({
+    username: "",
     email: "",
     tel: "",
-    address: "",
   });
 
   useEffect(() => {
-    setIdCompagnie(localStorage.getItem("selectedCompagnieId") || "");
-    if (idCompagnie) {
-      fetch(`/api/compagnies/${idCompagnie}`)
+      fetch(`/api/users/me`)
         .then((res) => res.json())
         .then((data) => {
-          setCompagnie(data.compagnie);
-          setTitle(data.compagnie.name);
+            setUser(data.data);
+            setIdUser(data.data._id);
+            setTitle(data.data.username);
         });
-    }
-  }, [idCompagnie]);
+  }, [setTitle]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: compagnie.name,
-      email: compagnie.email,
-      tel: compagnie.tel,
-      address: compagnie.address,
+      username: user.username,
+      email: user.email,
+      tel: user.tel,
     },
   });
 
   useEffect(() => {
-    form.reset(compagnie);
-  }, [compagnie, form]);
+    form.reset(user);
+  }, [user, form]);
 
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/compagnies/${idCompagnie}`, {
+      const response = await fetch(`/api/users/me`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -104,31 +102,33 @@ export default function Compagnie() {
   return (
     <div className="w-full flex flex-col flex-1 items-start gap-4 p-4 sm:px-6 sm:py-8 md:gap-8">
         <Toaster position='bottom-right'/> 
-      <div className="hidden md:flex">
-        <CardTitle>{title}</CardTitle>
+      <div className="hidden sm:flex">
+        <CardTitle>Bonjour {title}</CardTitle>
       </div>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(handleSubmit)}
           className="w-full flex flex-col gap-4 border px-4 py-12 rounded-xl border-slate-950 shadow-lg"
         >
-          <CardTitle className="text-xl">Modifier la compagnie</CardTitle>
+          <CardTitle className="text-xl">Modifier mes informations</CardTitle>
           <CardDescription>Entrer les nouvelles informations de la compagnie</CardDescription>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
             <FormField
               control={form.control}
-              name="name"
+              name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nom de la Compagnie</FormLabel>
+                  <FormLabel>Prénom & Nom </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Compagnie"
+                      placeholder="Simon Diouf"
                       type="text"
                       {...field}
                       onChange={(e) => {
                         field.onChange(e);
-                        setCompagnie({ ...compagnie, name: e.target.value });
+                        setUser({ ...user, username: e.target.value });
+                        setTitle(e.target.value);
+                        setIsModified(true);
                       }}
                     />
                   </FormControl>
@@ -149,7 +149,8 @@ export default function Compagnie() {
                       {...field}
                       onChange={(e) => {
                         field.onChange(e);
-                        setCompagnie({ ...compagnie, tel: e.target.value });
+                        setUser({ ...user, tel: e.target.value });
+                        setIsModified(true);
                       }}
                     />
                   </FormControl>
@@ -170,28 +171,8 @@ export default function Compagnie() {
                       {...field}
                       onChange={(e) => {
                         field.onChange(e);
-                        setCompagnie({ ...compagnie, email: e.target.value });
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="address"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Adresse</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Ouest Foire, Dakar, Sénégal"
-                      type="text"
-                      {...field}
-                      onChange={(e) => {
-                        field.onChange(e);
-                        setCompagnie({ ...compagnie, address: e.target.value });
+                        setUser({ ...user, email: e.target.value });
+                        setIsModified(true);
                       }}
                     />
                   </FormControl>
@@ -200,20 +181,20 @@ export default function Compagnie() {
               )}
             />
           </div>
-          <Button type="submit" className="max-w-xs w-full mt-4">
+          <Button type="submit" className="max-w-xs w-full mt-4" disabled={!isModified}> 
             {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Valider"}
           </Button>
         </form>
       </Form>
-      <div className="w-full flex flex-col gap-4 border px-4 py-12 rounded-xl border-slate-950 shadow-lg">
-        <CardTitle>Supprimer la compagnie</CardTitle>
+      {/* <div className="w-full flex flex-col gap-4 border px-4 py-12 rounded-xl border-slate-950 shadow-lg">
+        <CardTitle>Supprimer la user</CardTitle>
         <CardDescription>
           La suppression d&apos;une compagnie entraînera automatiquement la suppression de toutes les factures, revenus et dépenses associés à cette compagnie. Assurez-vous d&apos;avoir sauvegardé toutes les informations nécessaires avant de procéder à cette action. Cette opération est irréversible et toutes les données liées seront définitivement perdues.
         </CardDescription>
         <Button type="submit" className="max-w-xs w-full mt-4 bg-red-500 text-white hover:bg-red-600">
           Supprimer
         </Button>
-      </div>
+      </div> */}
     </div>
   );
 }

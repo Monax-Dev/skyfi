@@ -17,7 +17,7 @@ export default function CardCompagnyLink({compagny} : {compagny: any}) {
         router.push('/dashboard');
       }
   return (
-    <Card onClick={() => handleSelectCompagnie(compagny._id)} className=' shadow-xl max-w-xs w-72 hover:bg-slate-950 hover:text-slate-50 cursor-pointer'>
+    <Card onClick={() => handleSelectCompagnie(compagny._id)} className=' shadow-xl max-w-xs w-64 h-60 hover:bg-slate-950 hover:text-slate-50 cursor-pointer'>
     <CardHeader>
         <CardTitle>{compagny.name}</CardTitle>
     </CardHeader>
@@ -43,9 +43,6 @@ export default function CardCompagnyLink({compagny} : {compagny: any}) {
             </div>
         </CardDescription>
     </CardContent>
-    <CardFooter>
-        XOF {compagny.chiffreAffaires}
-    </CardFooter>
 </Card>
   )
 }
