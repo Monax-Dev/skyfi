@@ -34,6 +34,7 @@ export interface FactureDocument extends Document {
   items: Item[];
   totalAPayer: number;
   client: mongoose.Schema.Types.ObjectId;
+  compagnie: mongoose.Schema.Types.ObjectId;
   timestamps: Date;
   isPaid: boolean;
 }
@@ -54,6 +55,11 @@ const FactureSchema = new Schema<FactureDocument>({
     ref: 'Client',
     required: true
   },
+  compagnie:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Compagnie', 
+    required: true
+  },
   timestamps: { 
     type: Date,
     default: Date.now 
@@ -63,6 +69,7 @@ const FactureSchema = new Schema<FactureDocument>({
     default: false 
   },
 });
+
 
 const Facture: Model<FactureDocument> = mongoose.models.Facture || mongoose.model<FactureDocument>("Facture", FactureSchema);
 
