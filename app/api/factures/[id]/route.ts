@@ -1,41 +1,80 @@
-import Client from "@/models/client.model";
+import Facture from "@/models/facture.model";
+import Compagnie from "@/models/compagnie.model";
 import { connectToDB } from "@/db/db";
 import { NextRequest, NextResponse } from 'next/server';
-import { Types } from 'mongoose';
 
-// Fonction PUT pour mettre à jour un client par son ID
+// Fonction PUT pour mettre à jour une facture
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
     try {
-        const { id } = params;
+        const factureId = params.id; // ID de la facture à mettre à jour
         const reqBody = await request.json();
-        const { name, email, tel, address } = reqBody;
-
-        // Validation des données
-        if (!name && !email && !tel && !address) {
-            return NextResponse.json({ success: false, message: 'Au moins un champ doit être fourni pour la mise à jour' }, { status: 400 });
-        }
+        const { name, items, isPaid } = reqBody;
 
         await connectToDB();
 
-        // Vérifier si l'ID est valide
-        if (!Types.ObjectId.isValid(id)) {
-            return NextResponse.json({ success: false, message: 'ID invalide' }, { status: 400 });
+        // Trouver et mettre à jour la facture
+        const facture = await Facture.findById(factureId);
+        if (!facture) {
+            return NextResponse.json({ success: false, message: 'Facture non trouvée' }, { status: 404 });
         }
 
-        // Trouver et mettre à jour le client
-        const updatedClient = await Client.findByIdAndUpdate(
-            id,
-            { name, email, tel, address },
-            { new: true, runValidators: true }
-        );
+        // Mettre à jour les détails de la facture
+        facture.name = name || facture.name;
+        facture.items = items || facture.items;
+        facture.totalAPayer = items ? items.reduce((acc: number, item: { quantity: number, prixUnitaire: number }) => acc + (item.quantity * item.prixUnitaire), 0) : facture.totalAPayer;
+        facture.isPaid = isPaid !== undefined ? isPaid : facture.isPaid;
 
-        if (!updatedClient) {
-            return NextResponse.json({ success: false, message: 'Client non trouvé' }, { status: 404 });
+        const updatedFacture = await facture.save();
+
+        // Réinitialiser les revenus totaux en cas de mise à jour
+        const compagnie = await Compagnie.findOne({ factures: factureId }).populate('factures').exec();
+        if (compagnie) {
+            const factures = await Facture.find({ _id: { $in: compagnie.factures } }).exec();
+            const revenusTotals = factures.reduce((sum, facture) => facture.isPaid ? sum + facture.totalAPayer : sum, 0);
+            compagnie.revenusTotals = revenusTotals;
+            await compagnie.save(); // Mettre à jour les revenus totaux de la compagnie
         }
 
-        return NextResponse.json({ success: true, client: updatedClient });
+        return NextResponse.json({ success: true, facture: updatedFacture });
     } catch (error) {
         console.error(error);
-        return NextResponse.json({ success: false, message: 'Erreur lors de la mise à jour du client' }, { status: 500 });
+        return NextResponse.json({ success: false, message: 'Erreur lors de la mise à jour de la facture' }, { status: 500 });
+    }
+}
+
+// Fonction DELETE pour supprimer une facture
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+    try {
+        const factureId = params.id; // ID de la facture à supprimer
+
+        await connectToDB();
+
+        // Trouver et supprimer la facture
+        const facture = await Facture.findById(factureId);
+        if (!facture) {
+            return NextResponse.json({ success: false, message: 'Facture non trouvée' }, { status: 404 });
+        }
+
+        // Supprimer la facture
+        await Facture.findByIdAndDelete(factureId);
+
+        // Mettre à jour la compagnie associée
+        const compagnie = await Compagnie.findOne({ factures: factureId }).populate('factures').exec();
+        if (compagnie) {
+            // Retirer l'ID de la facture supprimée de la liste des factures
+            compagnie.factures = compagnie.factures.filter(facture => !facture._id.equals(factureId));
+            await compagnie.save();
+
+            // Réinitialiser les revenus totaux en cas de suppression
+            const factures = await Facture.find({ _id: { $in: compagnie.factures } }).exec();
+            const revenusTotals = factures.reduce((sum, facture) => facture.isPaid ? sum + facture.totalAPayer : sum, 0);
+            compagnie.revenusTotals = revenusTotals;
+            await compagnie.save(); // Mettre à jour les revenus totaux de la compagnie
+        }
+
+        return NextResponse.json({ success: true, message: 'Facture supprimée avec succès' });
+    } catch (error) {
+        console.error(error);
+        return NextResponse.json({ success: false, message: 'Erreur lors de la suppression de la facture' }, { status: 500 });
     }
 }
