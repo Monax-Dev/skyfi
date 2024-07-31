@@ -1,6 +1,7 @@
 import mongoose, { Document, Model, Schema, CallbackError } from "mongoose";
-import Facture from "./facture.model"; // Assurez-vous que le chemin d'importation est correct
-import Depense from "./depense.model"; // Assurez-vous que le chemin d'importation est correct
+import Facture from "./facture.model";
+import Depense from "./depense.model";
+import Client from "./client.model";
 
 export interface CompagnieDocument extends Document {
   name: string;
@@ -12,6 +13,7 @@ export interface CompagnieDocument extends Document {
   revenusTotals: number;
   depensesTotals: number;
   createdBy: mongoose.Types.ObjectId;
+  clients: mongoose.Types.ObjectId[];
   timestamps: Date;
 }
 
@@ -57,6 +59,11 @@ const CompagnieSchema = new Schema<CompagnieDocument>({
     ref: 'User', 
     required: true 
   },
+  clients: [{ 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Client', 
+    required: false 
+  }],
   timestamps: { 
     type: Date, 
     default: Date.now 
