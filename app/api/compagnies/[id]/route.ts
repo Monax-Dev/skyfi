@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDB } from "@/db/db";
 import Compagnie from "@/models/compagnie.model";
+import Facture from '@/models/facture.model'; // Assurez-vous que le chemin d'importation est correct
+import Depense from '@/models/depense.model';
+import User from '@/models/user.model';
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
     try {
@@ -57,7 +60,14 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
             return NextResponse.json({ error: 'Compagnie not found' }, { status: 404 });
         }
 
-        return NextResponse.json({ success: true, message: 'Compagnie deleted successfully' });
+        // Supprimer les factures et les dépenses associées
+        await Facture.deleteMany({ _id: { $in: compagnie.factures } });
+        await Depense.deleteMany({ _id: { $in: compagnie.depenses } });
+
+        // Supprimer les membres associés
+        await User.deleteMany({ _id: compagnie.createdBy });
+
+        return NextResponse.json({ success: true, message: 'Compagnie et ses associations supprimées avec succès' });
     } catch (error: any) {
         console.error(error);
         return NextResponse.json({ error: error.message }, { status: 500 });
