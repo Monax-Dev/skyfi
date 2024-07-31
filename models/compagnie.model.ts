@@ -63,6 +63,17 @@ const CompagnieSchema = new Schema<CompagnieDocument>({
   },
 });
 
+// Middleware pour supprimer les factures et les dépenses associées à une compagnie
+CompagnieSchema.pre('findOneAndDelete', async function(next) {
+  const compagnie = this;
+  try {
+    await Facture.deleteMany({ _id: { $in: compagnie.getFilter().factures } });
+    await Depense.deleteMany({ _id: { $in: compagnie.getFilter().depenses } });
+    next();
+  } catch (error: unknown) {
+    next(error as CallbackError);
+  }
+});
 
 const Compagnie: Model<CompagnieDocument> = mongoose.models.Compagnie || mongoose.model<CompagnieDocument>("Compagnie", CompagnieSchema);
 
