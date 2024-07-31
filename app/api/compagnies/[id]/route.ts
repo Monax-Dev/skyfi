@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDB } from "@/db/db";
 import Compagnie from "@/models/compagnie.model";
-import Facture from '@/models/facture.model'; // Assurez-vous que le chemin d'importation est correct
+import Facture from '@/models/facture.model';
 import Depense from '@/models/depense.model';
 import User from '@/models/user.model';
 

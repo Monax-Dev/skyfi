@@ -1,6 +1,6 @@
 import mongoose, { Document, Model, Schema, CallbackError } from "mongoose";
-import Facture from "./facture.model"; // Assurez-vous que le chemin d'importation est correct
-import Depense from "./depense.model"; // Assurez-vous que le chemin d'importation est correct
+import Facture from "./facture.model";
+import Depense from "./depense.model";
 
 export interface CompagnieDocument extends Document {
   name: string;
